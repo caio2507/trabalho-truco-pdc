@@ -37,3 +37,42 @@ def calcular_manilha_carta_virada(carta_virada):
     idx = valores.index(valor_virado)
     manilha_idx = (idx + 1) % len(valores)
     return valores[manilha_idx]
+
+def comparar_cartas(carta1, carta2, manilha):
+    v1 = valor_carta(carta1)
+    v2 = valor_carta(carta2)
+
+    if v1 == manilha and v2 != manilha:
+        return 1
+    if v2 == manilha and v1 != manilha:
+        return 2
+
+    ordem_naipe_manilha = {'Paus': 4, 'Copas': 3, 'Espada': 2, 'Ouro': 1}
+    if v1 == manilha and v2 == manilha:
+        naipe1 = carta1.split(' de ')[1]
+        naipe2 = carta2.split(' de ')[1]
+        if ordem_naipe_manilha[naipe1] > ordem_naipe_manilha[naipe2]:
+            return 1
+        elif ordem_naipe_manilha[naipe2] > ordem_naipe_manilha[naipe1]:
+            return 2
+        else:
+            return 0
+
+    if ordem_forca[v1] > ordem_forca[v2]:
+        return 1
+    elif ordem_forca[v2] > ordem_forca[v1]:
+        return 2
+    else:
+        return 0
+
+def escolher_carta(mao, jogador):
+    print(f"\nJogador {jogador}, suas cartas são:")
+    for i, carta in enumerate(mao):
+        print(f"{i + 1}: {carta_com_emoji(carta)}")
+    while True:
+        escolha = input(f"Escolha a carta para jogar (1-{len(mao)}): ")
+        if escolha.isdigit():
+            escolha = int(escolha)
+            if 1 <= escolha <= len(mao):
+                return mao.pop(escolha - 1)
+        print("Escolha inválida, tente novamente.")
