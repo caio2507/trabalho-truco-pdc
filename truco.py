@@ -114,9 +114,64 @@ def jogar_truco():
         baralho = criar_baralho()
         mao1, mao2 = distribuir_cartas(baralho)
 
-        # Carta que virou (define manilha)
+        
         carta_virada = baralho.pop()
         manilha = calcular_manilha_carta_virada(carta_virada)
 
         print(f"\nCarta que virou: {carta_com_emoji(carta_virada)} ({carta_virada})")
         print(f"Manilha dessa rodada: {manilha}")
+
+        print("\nCartas do Jogador 1:")
+        for carta in mao1:
+            print(carta_com_emoji(carta))
+
+        pontos_rodada = 1
+
+        aumento, pontos_rodada = pedir_aumento(1, pontos_rodada)
+        if aumento:
+            print(f"Jogador 1 pediu aumento para {pontos_rodada} pontos.")
+            aceitou, pontos_rodada = responder_aumento(2, pontos_rodada)
+            if not aceitou:
+                print(f"Jogador 2 recusou o aumento! Jogador 1 ganha {pontos_rodada // 3} ponto(s).")
+                pontos_jogador1 += pontos_rodada // 3 if pontos_rodada > 1 else 1
+                continue
+        else:
+            print("Jogador 1 não pediu aumento.")
+
+        pontos_parciais = {1: 0, 2: 0}
+
+        for rodada in range(1, 4):
+            print(f"\nRodada {rodada}:")
+            carta1 = escolher_carta(mao1, 1)
+            carta2 = escolher_carta(mao2, 2)
+            print(f"Jogador 1 jogou {carta_com_emoji(carta1)}")
+            print(f"Jogador 2 jogou {carta_com_emoji(carta2)}")
+
+            vencedor = comparar_cartas(carta1, carta2, manilha)
+            if vencedor == 0:
+                print("Rodada empatada!")
+            else:
+                print(f"Jogador {vencedor} venceu a rodada!")
+                pontos_parciais[vencedor] += 1
+
+            if pontos_parciais[1] == 2 or pontos_parciais[2] == 2:
+                break
+
+        if pontos_parciais[1] > pontos_parciais[2]:
+            print(f"\nJogador 1 venceu a mão e ganha {pontos_rodada} ponto(s)!")
+            pontos_jogador1 += pontos_rodada
+        elif pontos_parciais[2] > pontos_parciais[1]:
+            print(f"\nJogador 2 venceu a mão e ganha {pontos_rodada} ponto(s)!")
+            pontos_jogador2 += pontos_rodada
+        else:
+            print("\nMão empatada! Ninguém ganha ponto.")
+
+        print(f"\nPlacar: Jogador 1 = {pontos_jogador1} | Jogador 2 = {pontos_jogador2}")
+
+    if pontos_jogador1 >= 12:
+        print("\nJogador 1 venceu o jogo de Truco! Parabéns!")
+    else:
+        print("\nJogador 2 venceu o jogo de Truco! Parabéns!")
+
+if __name__ == "__main__":
+    jogar_truco()
